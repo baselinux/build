@@ -14,7 +14,7 @@ KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}
 BUSYBOX_URL="https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2"
 
 # Create necessary directories
-mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ISO_DIR}/boot/vmlinuz-${KERNEL_VERSION}
+mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR}  ${KERNEL_DIR}
 
 # Update package manager and install dependencies
 sudo apt update
