@@ -18,7 +18,7 @@ mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ISO_DIR}/boot/vmlinuz-${KERNEL_V
 
 # Update package manager and install dependencies
 sudo apt update
-sudo apt install -y build-essential gcc make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev ncurses-dev xz-utils
+sudo apt install -y build-essential gcc make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev ncurses-dev xz-utils initramfs-tools
 
 # Download and compile the Linux kernel
 wget ${KERNEL_URL} -P ${WORK_DIR}
