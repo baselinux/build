@@ -75,7 +75,6 @@ menuentry "BaseLinux" {
 EOF
 
 # Copy kernel and initrd to ISO
-cp -r  ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/
 ls ${WORK_DIR}
 ls ${KERNEL_DIR}
 cp -r ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
