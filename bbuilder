@@ -24,6 +24,7 @@ sudo apt install -y build-essential gcc make bison flex libssl-dev bc wget cpio 
 wget ${KERNEL_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/linux-${KERNEL_VERSION}.tar.xz -C ${WORK_DIR}
 cd ${WORK_DIR}/linux-${KERNEL_VERSION}
+make defconfig
 make -j$(nproc)
 sudo make modules_install INSTALL_MOD_PATH=${ISO_DIR}
 sudo make install INSTALL_PATH=${KERNEL_DIR}
@@ -33,6 +34,7 @@ cd ..
 wget ${BUSYBOX_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
+make defconfig
 make -j$(nproc)
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
