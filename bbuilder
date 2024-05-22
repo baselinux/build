@@ -26,8 +26,8 @@ tar -xvf ${WORK_DIR}/linux-${KERNEL_VERSION}.tar.xz -C ${WORK_DIR}
 cd ${WORK_DIR}/linux-${KERNEL_VERSION}
 make defconfig
 make -j$(nproc)
-make modules_install INSTALL_MOD_PATH=${ISO_DIR}
-make install INSTALL_PATH=${KERNEL_DIR}
+sudo make modules_install INSTALL_MOD_PATH=${ISO_DIR}
+sudo make install INSTALL_PATH=${KERNEL_DIR}
 cd ..
 
 # Download and compile BusyBox
@@ -41,21 +41,24 @@ cd ..
 
 # Create root filesystem directory structure
 mkdir -p ${WORK_DIR}/rootfs/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
-cd ${WORK_DIR}/rootfs
+
+# Copy BusyBox files to ISO
+cp -r ${WORK_DIR}/rootfs/* ${ISO_DIR}/
 
 # Add necessary libraries
-cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} lib/
+cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
 
 # Create init script
-cat > init << 'EOF'
+cat > ${ISO_DIR}/init << 'EOF'
 #!/bin/sh
 mount -t proc none /proc
 mount -t sysfs none /sys
 exec /bin/sh
 EOF
-chmod +x init
+chmod +x ${ISO_DIR}/init
 
 # Create initial ramdisk
+cd ${ISO_DIR}
 find . | cpio -o --format=newc | gzip > ${WORK_DIR}/initrd.img
 cd ${WORK_DIR}
 
@@ -66,10 +69,14 @@ set timeout=5
 set default=0
 
 menuentry "BaseLinux" {
-    linux /boot/vmlinuz
+    linux /boot/vmlinuz-${KERNEL_VERSION}
     initrd /boot/initrd.img
 }
 EOF
+
+# Copy kernel and initrd to ISO
+cp ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/
+cp ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
 
 # Create bootable ISO
 grub-mkrescue -o ${WORK_DIR}/BaseLinux.iso ${ISO_DIR}
