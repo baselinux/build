@@ -75,10 +75,10 @@ menuentry "BaseLinux" {
 EOF
 
 # Copy kernel and initrd to ISO
-cp ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/
+cp -r  ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/
 ls ${WORK_DIR}
 ls ${KERNEL_DIR}
-cp ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
+cp -r ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
 
 # Create bootable ISO
 grub-mkrescue -o ${WORK_DIR}/BaseLinux.iso ${ISO_DIR}
