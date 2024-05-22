@@ -26,8 +26,8 @@ tar -xvf ${WORK_DIR}/linux-${KERNEL_VERSION}.tar.xz -C ${WORK_DIR}
 cd ${WORK_DIR}/linux-${KERNEL_VERSION}
 make defconfig
 make -j$(nproc)
-sudo make modules_install INSTALL_MOD_PATH=${ISO_DIR}
-sudo make install INSTALL_PATH=${KERNEL_DIR}
+make modules_install INSTALL_MOD_PATH=${ISO_DIR}
+make install INSTALL_PATH=${KERNEL_DIR}
 cd ..
 
 # Download and compile BusyBox
@@ -76,6 +76,8 @@ EOF
 
 # Copy kernel and initrd to ISO
 cp ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/
+ls ${WORK_DIR}
+ls ${KERNEL_DIR}
 cp ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
 
 # Create bootable ISO
