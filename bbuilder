@@ -7,7 +7,7 @@ KERNEL_VERSION=$(cat versions/linux)
 BUSYBOX_VERSION=$(cat versions/busybox)
 
 # Define directories and URLs
-WORK_DIR="${HOME}/BaseLinux"
+WORK_DIR="BaseLinux"
 ISO_DIR="${WORK_DIR}/iso"
 KERNEL_DIR="${ISO_DIR}/boot"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}.tar.xz"
