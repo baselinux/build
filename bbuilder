@@ -68,8 +68,6 @@ cat > ${ISO_DIR}/boot/grub/grub.cfg << EOF
 set timeout=5
 set default=0
 
-mv ${ISO_DIR}/boot/vmlinuz-${KERNEL_VERSION} ${ISO_DIR}/boot/vmlinuz
-
 menuentry "BaseLinux" {
     linux /boot/vmlinuz
     initrd /boot/initrd.img
@@ -77,6 +75,7 @@ menuentry "BaseLinux" {
 EOF
 
 # Copy kernel and initrd to ISO
+mv ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${KERNEL_DIR}/vmlinuz
 ls ${WORK_DIR}
 ls ${KERNEL_DIR}
 cp -r ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
