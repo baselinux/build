@@ -62,8 +62,6 @@ cd ${ISO_DIR}
 find . | cpio -o --format=newc | gzip > ${WORK_DIR}/initrd.img
 cd ${WORK_DIR}
 
-INFO4GRUB = """
-"""
 # Create GRUB configuration
 mkdir -p ${ISO_DIR}/boot/grub
 cat > ${ISO_DIR}/boot/grub/grub.cfg << EOF
