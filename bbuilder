@@ -18,7 +18,7 @@ mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR}
 
 # Update package manager and install dependencies
 sudo apt update
-sudo apt install -y build-essential gcc make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev ncurses-dev xz-utils initramfs-tools mtools
+sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev ncurses-dev xz-utils initramfs-tools mtools
 
 # Download and compile the Linux kernel
 wget ${KERNEL_URL} -P ${WORK_DIR}
@@ -34,8 +34,8 @@ cd ..
 wget ${BUSYBOX_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
-make defconfig
-make -j$(nproc)
+make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- defconfig
+make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- -j $(nproc)
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
 
@@ -71,9 +71,19 @@ set default=0
 menuentry "BaseLinux with BusyBox" {
     linux /boot/vmlinuz
     initrd /boot/initrd.img
-    init=/bin/busybox
+    init=/bin/init
 }
 EOF
+
+cat > ${ISO_DIR}/bin/init << EOF
+#!/bin/busybox sh
+mount -t dev none /dev
+mount -t proc none /proc
+mount -t sys none /sys
+exec /bin/busybox
+EOF
+
+chmod +x ${ISO_DIR}/bin/init
 
 # Copy kernel and initrd to ISO
 mv ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${KERNEL_DIR}/vmlinuz
