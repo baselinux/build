@@ -45,7 +45,7 @@ cd ..
 
 cd ${CURDIR}
 chmod +x nano_compile
-./nano_compile
+./nano_compile ${WORK_DIR} ${ISO_DIR}
 
 # Copy BusyBox files to ISO
 cp -r "${ROOTFS_DIR}"/* ${ISO_DIR}
