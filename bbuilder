@@ -14,7 +14,7 @@ KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}
 BUSYBOX_URL="https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2"
 
 # Create necessary directories
-mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} 
+mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${WORK_DIR}/rootfs/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
 
 # Update package manager and install dependencies
 sudo apt update
@@ -30,29 +30,33 @@ make modules_install INSTALL_MOD_PATH=${ISO_DIR}
 make install INSTALL_PATH=${KERNEL_DIR}
 cd ..
 
-# Download and compile BusyBox
+# Download and compile BusyBox statically
 wget ${BUSYBOX_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
-make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- defconfig
-make ARCH=i686 LDFLAGS=-static CROSS_COMPILE=i686-linux-gnu- -j $(nproc)
+make defconfig
+sed -i 's/.*CONFIG_STATIC.*/CONFIG_STATIC=y/' .config
+make -j$(nproc)
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
 
-# Create root filesystem directory structure
-mkdir -p ${WORK_DIR}/rootfs/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
+# Create symbolic links for BusyBox
+cd ${WORK_DIR}/rootfs/bin
+ln -sf busybox sh
+cd ${WORK_DIR}
 
 # Copy BusyBox files to ISO
 cp -r ${WORK_DIR}/rootfs/* ${ISO_DIR}/
 
-# Add necessary libraries
-cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
+# Add necessary libraries (no need since BusyBox is statically compiled)
+#cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
 
 # Create init script
 cat > ${ISO_DIR}/init << 'EOF'
 #!/bin/sh
-mount -t proc none /proc
-mount -t sysfs none /sys
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
 exec /bin/sh
 EOF
 chmod +x ${ISO_DIR}/init
@@ -69,27 +73,14 @@ set timeout=5
 set default=0
 
 menuentry "BaseLinux with BusyBox" {
-    linux /boot/vmlinuz
+    linux /boot/vmlinuz init=/init
     initrd /boot/initrd.img
-    init=/bin/init
 }
 EOF
 
-cat > ${ISO_DIR}/bin/init << EOF
-#!/bin/busybox sh
-mount -t dev none /dev
-mount -t proc none /proc
-mount -t sys none /sys
-exec /bin/busybox
-EOF
-
-chmod +x ${ISO_DIR}/bin/init
-
 # Copy kernel and initrd to ISO
 mv ${KERNEL_DIR}/vmlinuz-${KERNEL_VERSION} ${KERNEL_DIR}/vmlinuz
-ls ${WORK_DIR}
-ls ${KERNEL_DIR}
-cp -r ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
+cp ${WORK_DIR}/initrd.img ${ISO_DIR}/boot/
 
 # Create bootable ISO
 grub-mkrescue -o ${WORK_DIR}/BaseLinux.iso ${ISO_DIR}
