@@ -1,12 +1,12 @@
 #!/bin/bash
 
-wget "https://www.nano-editor.org/dist/v8/nano-8.0.tar.xz" -P ${WORK_DIR}
+wget "https://www.nano-editor.org/dist/v8/nano-8.0.tar.xz" -P ${1}
 
-cd ${WORK_DIR}
+cd ${1}
 
-tar -xvf ${WORK_DIR}/nano-8.0.tar.xz -C ${WORK_DIR}
+tar -xvf ${1}/nano-8.0.tar.xz -C ${1}
 cd nano-8.0
 
-./configure CFLAGS='-static' CXXFLAGS='-static' CC="i686-linux-gnu-gcc" --prefix="${ISO_DIR}/bin"
+./configure CFLAGS='-static' CXXFLAGS='-static' CC="i686-linux-gnu-gcc" --prefix="${2}/bin"
 make CFLAGS='-static' CXXFLAGS='-static' CC="i686-linux-gnu-gcc"
 make install 
