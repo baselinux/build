@@ -6,6 +6,7 @@ set -e
 KERNEL_VERSION=$(cat versions/linux)
 BUSYBOX_VERSION=$(cat versions/busybox)
 
+CURDIR=$(pwd)
 # Define directories and URLs
 WORK_DIR="${PWD}/BaseLinux"
 ISO_DIR="${WORK_DIR}/iso"
@@ -42,6 +43,7 @@ make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- LDFLAGS=-static -j$(nproc)
 make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- install CONFIG_PREFIX=${ROOTFS_DIR}
 cd ..
 
+cd ${CURDIR}
 chmod +x nano_compile
 ./nano_compile
 
