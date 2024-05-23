@@ -47,7 +47,7 @@ cd ..
 #cd ${WORK_DIR}
 
 # Copy BusyBox files to ISO
-cp -r "${WORK_DIR}/rootfs/*" ${ISO_DIR}
+cp -r "${WORK_DIR}/rootfs"/* ${ISO_DIR}
 cd ${ISO_DIR}
 cp -r ./bin/busybox ./bin/sh
 
