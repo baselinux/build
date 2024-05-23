@@ -67,7 +67,7 @@ set timeout=5
 set default=0
 
 menuentry "BaseLinux with BusyBox" {
-    linux /boot/vmlinuz-${KERNEL_VERSION} init=/init
+    linux /boot/vmlinuz init=/init
     initrd /boot/initrd.img
 }
 EOF
