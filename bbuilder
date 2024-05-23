@@ -47,10 +47,10 @@ ln -sf busybox sh
 cd ${WORK_DIR
 
 # Copy BusyBox files to ISO
-cp -r ${WORK_DIR}/rootfs/* ${ISO_DIR}/
+cp -r "${WORK_DIR}/rootfs/*" ${ISO_DIR}
 
 # Add necessary libraries (no need since BusyBox is statically compiled)
-#cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
+# cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
 
 # Create init script
 cat > ${ISO_DIR}/init << 'EOF'
