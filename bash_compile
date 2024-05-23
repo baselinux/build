@@ -1,11 +1,11 @@
 #!/bin/bash
 
-wget "https://www.nano-editor.org/dist/v8/nano-8.0.tar.xz" -P ${1}
+wget "https://ftp.gnu.org/gnu/bash/bash-5.2.21.tar.gz" -P ${1}
 
 cd ${1}
 
-tar -xvf ${1}/nano-8.0.tar.xz -C ${1}
-cd nano-8.0
+tar -xvf ${1}/bash-5.2.21.tar.gz -C ${1}
+cd bash-5.2.21
 
 ./configure CFLAGS='-static' CXXFLAGS='-static' CC="i686-linux-gnu-gcc" --prefix="${2}"
 make CFLAGS='-static' CXXFLAGS='-static' CC="i686-linux-gnu-gcc"
