@@ -36,6 +36,7 @@ tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
 make defconfig
 sed -i 's/.*CONFIG_STATIC.*/CONFIG_STATIC=y/' .config
+make oldconfig
 make -j$(nproc)
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
