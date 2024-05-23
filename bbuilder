@@ -20,7 +20,8 @@ mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ROOTFS_DIR}/{bin,dev,etc,home,li
 
 # Update package manager and install dependencies
 sudo apt update
-sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libncurses5-dev ncurses-dev xz-utils initramfs-tools mtools
+sudo dpkg --add-architecture i386
+sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libncurses5-dev libncursesw5-dev ncurses-dev xz-utils initramfs-tools mtools libtinfo-dev:i386 libncurses5-dev:i386 libncurses5 libncurses5:i386 libncursesw5-dev:i386
 
 # Download and compile the Linux kernel for i686
 wget ${KERNEL_URL} -P ${WORK_DIR}
