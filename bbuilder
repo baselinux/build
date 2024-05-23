@@ -9,49 +9,42 @@ BUSYBOX_VERSION=$(cat versions/busybox)
 # Define directories and URLs
 WORK_DIR="${PWD}/BaseLinux"
 ISO_DIR="${WORK_DIR}/iso"
-KERNEL_DIR="${WORK_DIR}/iso/boot"
+KERNEL_DIR="${ISO_DIR}/boot"
+ROOTFS_DIR="${WORK_DIR}/rootfs"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}.tar.xz"
 BUSYBOX_URL="https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2"
 
 # Create necessary directories
-mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${WORK_DIR}/rootfs/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
+mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ROOTFS_DIR}/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
 
 # Update package manager and install dependencies
 sudo apt update
 sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev ncurses-dev xz-utils initramfs-tools mtools
 
-# Download and compile the Linux kernel
+# Download and compile the Linux kernel for i686
 wget ${KERNEL_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/linux-${KERNEL_VERSION}.tar.xz -C ${WORK_DIR}
 cd ${WORK_DIR}/linux-${KERNEL_VERSION}
-make defconfig
-make -j$(nproc)
-make modules_install INSTALL_MOD_PATH=${ISO_DIR}
-make install INSTALL_PATH=${KERNEL_DIR}
+make ARCH=i386 defconfig
+make ARCH=i386 -j$(nproc)
+make ARCH=i386 modules_install INSTALL_MOD_PATH=${ISO_DIR}
+make ARCH=i386 install INSTALL_PATH=${KERNEL_DIR}
 cd ..
 
-# Download and compile BusyBox statically
+# Download and compile BusyBox statically for i686
 wget ${BUSYBOX_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
 make defconfig
 sed -i 's/.*CONFIG_STATIC.*/CONFIG_STATIC=y/' .config
 echo "CONFIG_STATIC_LIBGCC=y" >> .config
-make -j$(nproc) LDFLAGS=-static
-make install CONFIG_PREFIX=${WORK_DIR}/rootfs
+make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- LDFLAGS=-static -j$(nproc)
+make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- install CONFIG_PREFIX=${ROOTFS_DIR}
 cd ..
 
-# Create symbolic links for BusyBox
-#cd ${WORK_DIR}/rootfs/bin
-#ln -sf busybox sh
-#cd ${WORK_DIR}
-
 # Copy BusyBox files to ISO
-cp -r "${WORK_DIR}/rootfs"/* ${ISO_DIR}
+cp -r "${ROOTFS_DIR}"/* ${ISO_DIR}
 cd ${ISO_DIR}
-
-# Add necessary libraries (no need since BusyBox is statically compiled)
-# cp /lib/x86_64-linux-gnu/{libc.so.6,libm.so.6,libresolv.so.2,ld-linux-x86-64.so.2} ${ISO_DIR}/lib/
 
 # Create init script
 cat > ${ISO_DIR}/init << 'EOF'
@@ -59,12 +52,11 @@ cat > ${ISO_DIR}/init << 'EOF'
 mount -t devtmpfs devtmpfs /dev
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
-exec /bin/sh
+exec /bin/busybox sh
 EOF
 chmod +x ${ISO_DIR}/init
 
 # Create initial ramdisk
-cd ${ISO_DIR}
 find . | cpio -o --format=newc | gzip > ${WORK_DIR}/initrd.img
 cd ${WORK_DIR}
 
@@ -75,7 +67,7 @@ set timeout=5
 set default=0
 
 menuentry "BaseLinux with BusyBox" {
-    linux /boot/vmlinuz init=/init
+    linux /boot/vmlinuz-${KERNEL_VERSION} init=/init
     initrd /boot/initrd.img
 }
 EOF
@@ -90,6 +82,6 @@ grub-mkrescue -o ${WORK_DIR}/BaseLinux.iso ${ISO_DIR}
 echo "BaseLinux ISO created successfully: ${WORK_DIR}/BaseLinux.iso"
 
 # Clean up
-rm -rf ${WORK_DIR}/rootfs ${WORK_DIR}/initrd.img ${WORK_DIR}/linux-${KERNEL_VERSION} ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
+rm -rf ${ROOTFS_DIR} ${WORK_DIR}/initrd.img ${WORK_DIR}/linux-${KERNEL_VERSION} ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
 
 echo "To test the ISO with QEMU, run: qemu-system-x86_64 -cdrom ${WORK_DIR}/BaseLinux.iso"
