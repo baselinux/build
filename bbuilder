@@ -36,15 +36,15 @@ tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
 make defconfig
 sed -i 's/.*CONFIG_STATIC.*/CONFIG_STATIC=y/' .config
-make oldconfig
-make -j$(nproc)
+echo "CONFIG_STATIC_LIBGCC=y" >> .config
+make -j$(nproc) LDFLAGS=-static
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
 
 # Create symbolic links for BusyBox
 cd ${WORK_DIR}/rootfs/bin
 ln -sf busybox sh
-cd ${WORK_DIR}
+cd ${WORK_DIR
 
 # Copy BusyBox files to ISO
 cp -r ${WORK_DIR}/rootfs/* ${ISO_DIR}/
