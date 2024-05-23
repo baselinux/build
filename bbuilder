@@ -35,7 +35,7 @@ wget ${BUSYBOX_URL} -P ${WORK_DIR}
 tar -xvf ${WORK_DIR}/busybox-${BUSYBOX_VERSION}.tar.bz2 -C ${WORK_DIR}
 cd ${WORK_DIR}/busybox-${BUSYBOX_VERSION}
 make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- defconfig
-make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- -j $(nproc)
+make ARCH=i686 LDFLAGS=-static CROSS_COMPILE=i686-linux-gnu- -j $(nproc)
 make install CONFIG_PREFIX=${WORK_DIR}/rootfs
 cd ..
 
