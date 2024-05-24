@@ -23,7 +23,12 @@ mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ROOTFS_DIR}/{bin,dev,etc,home,li
 sudo apt update
 sudo dpkg --add-architecture i386
 sudo apt update
-sudo apt install -y build-essential gcc gcc-i686-linux-gnu g++-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libtinfo-dev:i386 libncurses5-dev libncurses5-dev:i386 xz-utils initramfs-tools mtools libncurses5 libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev zlib1g zlib1g-dev:i386 lzma-dev liblzma-dev liblzma-dev:i386
+sudo apt install -y build-essential gcc gcc-i686-linux-gnu g++-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libtinfo-dev:i386 libncurses5-dev libncurses5-dev:i386 xz-utils initramfs-tools mtools libncurses5 libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev zlib1g zlib1g-dev:i386 lzma-dev liblzma-dev liblzma-dev:i386 libreadline-dev libreadline-dev:i386
+
+
+cd ${CURDIR}
+chmod +x python_compile
+./python_compile ${WORK_DIR} ${ISO_DIR}
 
 # Download and compile the Linux kernel for i686
 wget ${KERNEL_URL} -P ${WORK_DIR}
@@ -57,9 +62,6 @@ cd ${CURDIR}
 chmod +x bash_compile
 ./bash_compile ${WORK_DIR} ${ISO_DIR}
 
-cd ${CURDIR}
-chmod +x python_compile
-./python_compile ${WORK_DIR} ${ISO_DIR}
 
 # Copy BusyBox files to ISO
 cp -r "${ROOTFS_DIR}"/* ${ISO_DIR}
