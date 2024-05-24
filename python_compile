@@ -38,6 +38,7 @@ _lsprof _lsprof.c rotatingtree.c
 _multiprocessing -I$(srcdir)/Modules/_multiprocessing _multiprocessing/multiprocessing.c _multiprocessing/semaphore.c
 _opcode _opcode.c
 _pickle _pickle.c
+_posixsubprocess _posixsubprocess.c
 _queue _queuemodule.c
 _random _randommodule.c
 _socket socketmodule.c
