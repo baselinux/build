@@ -7,6 +7,6 @@ cd ${1}
 tar -xvf ${1}/Python-3.12.3.tar.xz -C ${1}
 cd Python-3.12.3
 
-./configure CFLAGS="-lgcov" CXXFLAGS="-lgcov" LDFLAGS="-static" --disable-shared CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" --prefix="${2}" --enable-optimizations
-make CFLAGS="-lgcov" CXXFLAGS="-lgcov" LDFLAGS="-static" LINKFORSHARED=" " CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" -j$(nproc)
+./configure CFLAGS="-fprofile-arcs -ftest-coverage" CXXFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-static -lgcov --coverage" --disable-shared CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" --prefix="${2}" --enable-optimizations
+make CFLAGS="-fprofile-arcs -ftest-coverage" CXXFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-static -lgcov --coverage" LINKFORSHARED=" " CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" -j$(nproc)
 make install 
