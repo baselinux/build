@@ -2,12 +2,28 @@
 
 set -e  # Exit on error
 
-git clone git://github.com/python-cmake-buildsystem/python-cmake-buildsystem
+# Variables
+PYTHON_VERSION="3.8.0"
+TARGET_DIR="${1}"
+INSTALL_DIR="${2}"
 
-mv python-cmake-buildsystem ${TARGET_DIR}
-cd "${TARGET_DIR}/python-cmake-buildsystem"
+# Download Python source
+wget "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz" -P "${TARGET_DIR}"
 
-cmake -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} -DBUILD_EXTENSIONS_AS_BUILTIN=ON -DWITH_STATIC_DEPENDENCIES=ON .
+# Extract source
+tar -xvf "${TARGET_DIR}/Python-${PYTHON_VERSION}.tar.xz" -C "${TARGET_DIR}"
+cd "${TARGET_DIR}/Python-${PYTHON_VERSION}"
 
-make -j$(nproc)
+# Configure build
+./configure \
+    CFLAGS="-fprofile-arcs -ftest-coverage" \
+    CXXFLAGS="-fPIC -fprofile-arcs -ftest-coverage" \
+    LDFLAGS="-lgcov --coverage -static -static-libgcc -static-libstdc++" \
+    --disable-shared \
+    --prefix="${INSTALL_DIR}" \
+    CC="i686-linux-gnu-gcc" \
+    CXX="i686-linux-gnu-g++"
+
+# Build and install
+make LINKFORSHARED=" " -j$(nproc)
 make install
