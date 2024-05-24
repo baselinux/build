@@ -18,7 +18,7 @@ cd "${TARGET_DIR}/Python-${PYTHON_VERSION}"
 ./configure \
     CFLAGS="-fprofile-arcs -ftest-coverage" \
     CXXFLAGS="-fPIC -fprofile-arcs -ftest-coverage" \
-    LDFLAGS="-static -static-libgcc -static-libstdc++" \
+    LDFLAGS="-lgcov --coverage -static -static-libgcc -static-libstdc++" \
     --disable-shared \
     --prefix="${INSTALL_DIR}" \
     CC="i686-linux-gnu-gcc" \
