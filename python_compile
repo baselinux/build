@@ -1,14 +1,29 @@
 #!/bin/bash
 
-wget "https://www.python.org/ftp/python/3.12.3/Python-3.12.3.tar.xz" -P ${1}
+set -e  # Exit on error
 
-cd ${1}
+# Variables
+PYTHON_VERSION="3.12.3"
+TARGET_DIR="${1}"
+INSTALL_DIR="${2}"
 
-tar -xvf ${1}/Python-3.12.3.tar.xz -C ${1}
-cd Python-3.12.3
+# Download Python source
+wget "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz" -P "${TARGET_DIR}"
 
-./configure CFLAGS="-fprofile-arcs -ftest-coverage" CXXFLAGS="-fPIC -fprofile-arcs -ftest-coverage" LDFLAGS="-static -lgcov --coverage -static-libgcc" --disable-shared CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" --prefix="${2}"
+# Extract source
+tar -xvf "${TARGET_DIR}/Python-${PYTHON_VERSION}.tar.xz" -C "${TARGET_DIR}"
+cd "${TARGET_DIR}/Python-${PYTHON_VERSION}"
 
-make CFLAGS="-fprofile-arcs -ftest-coverage" CXXFLAGS="-fPic -fprofile-arcs -ftest-coverage" LDFLAGS="-static -lgcov --coverage -static-libgcc" LINKFORSHARED=" " CC="i686-linux-gnu-gcc" CXX="i686-linux-gnu-g++" -j$(nproc)
+# Configure build
+./configure \
+    CFLAGS="-fprofile-arcs -ftest-coverage" \
+    CXXFLAGS="-fPIC -fprofile-arcs -ftest-coverage" \
+    LDFLAGS="-static -static-libgcc -static-libstdc++" \
+    --disable-shared \
+    --prefix="${INSTALL_DIR}" \
+    CC="i686-linux-gnu-gcc" \
+    CXX="i686-linux-gnu-g++"
 
-make install 
+# Build and install
+make LINKFORSHARED=" " -j$(nproc)
+make install
