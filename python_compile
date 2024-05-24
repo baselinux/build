@@ -44,6 +44,7 @@ _socket socketmodule.c
 _statistics _statisticsmodule.c
 _struct _struct.c
 _typing _typingmodule.c
+_xxsubinterpretersmodule _xxsubinterpretersmodule.c
 _zoneinfo _zoneinfo.c
 array arraymodule.c
 audioop audioop.c
