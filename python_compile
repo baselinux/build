@@ -2,59 +2,12 @@
 
 set -e  # Exit on error
 
-# Variables
-PYTHON_VERSION="3.11.9"
-TARGET_DIR="${1}"
-INSTALL_DIR="${2}"
+git clone git://github.com/python-cmake-buildsystem/python-cmake-buildsystem
 
-# Download Python source
-wget "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz" -P "${TARGET_DIR}"
+mv python-cmake-buildsystem ${TARGET_DIR}
+cd "${TARGET_DIR}/python-cmake-buildsystem"
 
-# Extract source
-tar -xvf "${TARGET_DIR}/Python-${PYTHON_VERSION}.tar.xz" -C "${TARGET_DIR}"
-cd "${TARGET_DIR}/Python-${PYTHON_VERSION}"
+cmake -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} -DBUILD_EXTENSIONS_AS_BUILTIN=ON -DWITH_STATIC_DEPENDENCIES=ON .
 
-# Configure build
-./configure \
-    CFLAGS="-fprofile-arcs -ftest-coverage" \
-    CXXFLAGS="-fPIC -fprofile-arcs -ftest-coverage" \
-    LDFLAGS="-lgcov --coverage -static -static-libgcc -static-libstdc++" \
-    --disable-shared \
-    --prefix="${INSTALL_DIR}" \
-    CC="i686-linux-gnu-gcc" \
-    CXX="i686-linux-gnu-g++"
-
-cat >> Modules/Setup.local << EOF
-*static*
-_asyncio _asynciomodule.c
-_bisect _bisectmodule.c
-_contextvars _contextvarsmodule.c
-_csv _csv.c
-_datetime _datetimemodule.c
-_decimal _decimal/_decimal.c
-_heapq _heapqmodule.c
-_json _json.c
-_lsprof _lsprof.c rotatingtree.c
-_multiprocessing -I$(srcdir)/Modules/_multiprocessing _multiprocessing/multiprocessing.c _multiprocessing/semaphore.c
-_opcode _opcode.c
-_pickle _pickle.c
-_posixsubprocess _posixsubprocess.c
-_queue _queuemodule.c
-_random _randommodule.c
-_socket socketmodule.c
-_statistics _statisticsmodule.c
-_struct _struct.c
-_typing _typingmodule.c
-_zoneinfo _zoneinfo.c
-array arraymodule.c
-audioop audioop.c
-binascii binascii.c
-cmath cmathmodule.c
-math mathmodule.c
-mmap mmapmodule.c
-select selectmodule.c
-EOF
-
-# Build and install
-make LINKFORSHARED=" " -j$(nproc)
+make -j$(nproc)
 make install
