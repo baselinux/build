@@ -47,7 +47,7 @@ make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- install CONFIG_PREFIX=${ROOTFS_DIR}
 cd ..
 
 # Copy terminfo files
-cp -r /usr/share/terminfo ${TERMINFO_DIR}
+cp -r /usr/share/terminfo/* ${TERMINFO_DIR}
 
 cd ${CURDIR}
 chmod +x nano_compile
