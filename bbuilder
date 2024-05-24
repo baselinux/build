@@ -14,15 +14,16 @@ KERNEL_DIR="${ISO_DIR}/boot"
 ROOTFS_DIR="${WORK_DIR}/rootfs"
 KERNEL_URL="https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${KERNEL_VERSION}.tar.xz"
 BUSYBOX_URL="https://busybox.net/downloads/busybox-${BUSYBOX_VERSION}.tar.bz2"
+TERMINFO_DIR="${ROOTFS_DIR}/usr/share/terminfo"
 
 # Create necessary directories
-mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ROOTFS_DIR}/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var}
+mkdir -p ${WORK_DIR} ${ISO_DIR} ${KERNEL_DIR} ${ROOTFS_DIR}/{bin,dev,etc,home,lib,proc,sbin,sys,tmp,usr,var} ${TERMINFO_DIR}
 
 # Update package manager and install dependencies
 sudo apt update
 sudo dpkg --add-architecture i386
 sudo apt update
-sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libtinfo-dev:i386 libncurses* libncurses*:i386 xz-utils initramfs-tools mtools libncurses5 
+sudo apt install -y build-essential gcc gcc-i686-linux-gnu make bison flex libssl-dev bc wget cpio grub-pc-bin git fakeroot libelf-dev libtinfo-dev libtinfo-dev:i386 libncurses5-dev libncurses5-dev:i386 xz-utils initramfs-tools mtools libncurses5
 
 # Download and compile the Linux kernel for i686
 wget ${KERNEL_URL} -P ${WORK_DIR}
@@ -44,6 +45,9 @@ echo "CONFIG_STATIC_LIBGCC=y" >> .config
 make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- LDFLAGS=-static -j$(nproc)
 make ARCH=i686 CROSS_COMPILE=i686-linux-gnu- install CONFIG_PREFIX=${ROOTFS_DIR}
 cd ..
+
+# Copy terminfo files
+cp -r /usr/share/terminfo ${TERMINFO_DIR}
 
 cd ${CURDIR}
 chmod +x nano_compile
