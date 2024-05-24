@@ -67,7 +67,8 @@ cat > ${ISO_DIR}/init << 'EOF'
 mount -t devtmpfs devtmpfs /dev
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
-exec /bin/busybox sh
+export TERM=linux-basic
+exec /bin/busybox /bin/bash
 EOF
 chmod +x ${ISO_DIR}/init
 
