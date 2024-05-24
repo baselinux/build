@@ -3,7 +3,7 @@
 set -e  # Exit on error
 
 # Variables
-PYTHON_VERSION="3.12.3"
+PYTHON_VERSION="3.11.9"
 TARGET_DIR="${1}"
 INSTALL_DIR="${2}"
 
@@ -44,7 +44,6 @@ _socket socketmodule.c
 _statistics _statisticsmodule.c
 _struct _struct.c
 _typing _typingmodule.c
-_xxsubinterpretersmodule _xxsubinterpretersmodule.c
 _zoneinfo _zoneinfo.c
 array arraymodule.c
 audioop audioop.c
