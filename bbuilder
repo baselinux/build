@@ -68,7 +68,8 @@ mount -t devtmpfs devtmpfs /dev
 mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 export TERM=linux-basic
-exec /bin/busybox /bin/bash
+exec /bin/busybox sh &
+exec /bin/bash -c "clear && export TERM=linux-basic && /bin/bash"
 EOF
 chmod +x ${ISO_DIR}/init
 
