@@ -6,7 +6,7 @@ cd ${1}
 unzip python-cmake-buildsystem.zip
 
 mv python-cmake-buildsystem ${2}
-cd "${TARGET_DIR}/python-cmake-buildsystem"
+cd "${2}/python-cmake-buildsystem"
 
 cmake -DCMAKE_INSTALL_PREFIX:PATH=${3} -DBUILD_EXTENSIONS_AS_BUILTIN=ON -DWITH_STATIC_DEPENDENCIES=ON .
 
