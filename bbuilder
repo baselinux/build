@@ -28,7 +28,7 @@ sudo apt install -y build-essential cmake gcc gcc-i686-linux-gnu g++-i686-linux-
 
 cd ${CURDIR}
 chmod +x python_compile
-./python_compile ${CURDIR} ${ISO_DIR}
+./python_compile ${CURDIR} ${WORK_DIR} ${ISO_DIR}
 
 # Download and compile the Linux kernel for i686
 wget ${KERNEL_URL} -P ${WORK_DIR}
