@@ -8,7 +8,10 @@ unzip python-cmake-buildsystem.zip
 mv python-cmake-buildsystem ${2}
 cd "${2}/python-cmake-buildsystem"
 
-cmake -DCMAKE_INSTALL_PREFIX:PATH=${3} -DBUILD_EXTENSIONS_AS_BUILTIN=ON -DWITH_STATIC_DEPENDENCIES=ON .
+cmake DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic" \
+      -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic" \
+      -DCMAKE_EXE_LINKER_FLAGS="${CMAKE_EXE_LINKER_FLAGS} -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -Wl,-Bstatic -lreadline -ltinfo -lX11 -lxcb -lXau -lXdmcp -lXext -lXft -lXrender -lfontconfig -lfreetype -lcrypto -lssl -Wl,-Bdynamic -ldl -lpthread -lm -lc" \
+-DCMAKE_INSTALL_PREFIX:PATH=${3} -DBUILD_EXTENSIONS_AS_BUILTIN=ON -DWITH_STATIC_DEPENDENCIES=ON .
 
 make -j$(nproc)
 make install
