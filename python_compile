@@ -2,7 +2,7 @@
 
 set -e  # Exit on error
 
-cd ${CURDIR}
+cd ${1}
 unzip python-cmake-buildsystem.zip
 
 mv python-cmake-buildsystem ${TARGET_DIR}
